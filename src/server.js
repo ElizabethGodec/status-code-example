@@ -1,6 +1,7 @@
 const http = require('http');
 const htmlHandler = require('./htmlResponses.js');
 const jsonHandler = require('./jsonResponses.js');
+const { parse } = require('path');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
@@ -14,6 +15,11 @@ const urlStruct = {
 const onRequest = (request, response) => {
   const protocol = request.connection.encrypted ? 'https' : 'http';
   const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
+
+  request.query = Object.fromEntries(parsedUrl.searchParams);
+
+  console.log(parsedUrl);
+  console.log(request.query);
 
   if (urlStruct[parsedUrl.pathname]) {
     urlStruct[parsedUrl.pathname](request, response);
